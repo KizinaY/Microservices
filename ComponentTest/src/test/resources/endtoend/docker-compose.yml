@@ -1,0 +1,94 @@
+version: '3'
+services:
+  e2e-gateway-service:
+    build:
+      context: D:\work\Projects\Micro\gateway
+    ports:
+      - 8035:8035
+    depends_on:
+      - e2e-eureka-discovery-service
+    networks:
+      - e2e-audio-network
+    env_file:
+      - gateway/.env
+
+  e2e-resource-service:
+    build:
+      context: D:\work\Projects\Micro\ResourceService
+    ports:
+      - 8030:8030
+    depends_on:
+      - e2e-audio-postgres
+      - e2e-rabbitmq
+      - e2e-eureka-discovery-service
+    networks:
+      - e2e-audio-network
+    env_file:
+      - resource/.env
+  e2e-audio-postgres:
+    image: postgres
+    container_name: e2e-audio-postgres
+    ports:
+      - 5430:5432
+    networks:
+      - e2e-audio-network
+    env_file:
+      - resource/.env
+  e2e-rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: e2e-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - e2e-audio-network
+    env_file:
+      - resource/.env
+  e2e-eureka-discovery-service:
+    build:
+      context: D:\work\Projects\Micro\EurekaRegistry
+    ports:
+      - 8032:8032
+    networks:
+      - e2e-audio-network
+
+  e2e-song-service:
+    build:
+      context: D:\work\Projects\Micro\SongService
+    ports:
+      - 8033:8031
+    depends_on:
+      - e2e-metadata-postgres
+      - e2e-eureka-discovery-service
+      - e2e-rabbitmq
+    networks:
+      - e2e-audio-network
+    env_file:
+      - metadata/.env
+
+  e2e-metadata-postgres:
+    image: postgres
+    container_name: e2e-metadata-postgres
+    ports:
+      - 5431:5432
+    networks:
+      - e2e-audio-network
+    env_file:
+      - metadata/.env
+
+  e2e-resource-processor:
+    build:
+      context: D:\work\Projects\Micro\ResourceProcessor
+    ports:
+      - 8036:8036
+    depends_on:
+      - e2e-eureka-discovery-service
+      - e2e-song-service
+      - e2e-rabbitmq
+    networks:
+      - e2e-audio-network
+    env_file:
+      - processor/.env
+networks:
+  e2e-audio-network:
+    external: true

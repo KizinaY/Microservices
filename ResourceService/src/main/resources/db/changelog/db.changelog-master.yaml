@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableAudioLocation
+      author: kizina
+      changes:
+        - createTable:
+            tableName: audio_location
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: bucket_name
+                  type: VARCHAR(255)
+              - column:
+                  name: file_key
+                  type: VARCHAR(255)

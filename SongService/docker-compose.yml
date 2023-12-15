@@ -1,0 +1,41 @@
+version: '3'
+services:
+  song-service-1:
+    build:
+      context: .
+    ports:
+      - 8031:8031
+    depends_on:
+      - metadata-postgres
+    networks:
+      - audio-network
+    env_file:
+      - .env
+
+  song-service-2:
+    build:
+      context: .
+    ports:
+      - 8033:8031
+    depends_on:
+      - metadata-postgres
+    networks:
+      - audio-network
+    env_file:
+      - .env
+
+  metadata-postgres:
+    image: postgres
+    container_name: metadata-postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5431:5432
+    volumes:
+      - ./metadata:/var/lib/postgresql/data
+    networks:
+      - audio-network
+networks:
+  audio-network:
+    external: true

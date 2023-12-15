@@ -1,0 +1,44 @@
+version: '3'
+services:
+  test-resource-service:
+    build:
+      context: D:\work\Projects\Micro\ResourceService
+    ports:
+      - 8030:8030
+    depends_on:
+      - test-audio-postgres
+      - test-rabbitmq
+      - test-eureka-discovery-service
+    networks:
+      - test-audio-network
+    env_file:
+      - .env
+  test-audio-postgres:
+    image: postgres
+    container_name: test-audio-postgres
+    ports:
+      - 5430:5432
+    networks:
+      - test-audio-network
+    env_file:
+      - .env
+  test-rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: test-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - test-audio-network
+    env_file:
+      - .env
+  test-eureka-discovery-service:
+    build:
+      context: D:\work\Projects\Micro\EurekaRegistry
+    ports:
+      - 8032:8032
+    networks:
+      - test-audio-network
+networks:
+  test-audio-network:
+    external: true

@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableMetadata
+      author: kizina
+      changes:
+        - createTable:
+            tableName: metadata
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: artist
+                  type: VARCHAR(255)
+              - column:
+                  name: album
+                  type: VARCHAR(255)
+              - column:
+                  name: duration
+                  type: VARCHAR(255)
+              - column:
+                  name: song_year
+                  type: VARCHAR(255)
+              - column:
+                  name: resource_id
+                  type: BIGINT
+                  constraints:
+                    unique: true

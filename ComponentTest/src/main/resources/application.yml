@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5430/audio
+    password: pass
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: pswr
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+      hbm2ddl.auto: validate
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  application:
+    name: component-test
+  profiles:
+    active: test
+server:
+  port: 8020
+bucket:
+  name: kizinabucket2
+queue:
+  name:
+    audio: audio-queue
+exchange:
+  name:
+    audio: audio-exchange
+access:
+  key: ASIAZ4PSFSLUSW3TIQFY
+secret:
+  key: m6euFBwu4HkWJzZVug8ZAqRF6kMexbtHO3yNfMzE
+session:
+  token: IQoJb3JpZ2luX2VjEBQaCmV1LW5vcnRoLTEiSDBGAiEA5Jo4neRJmdPo/5AxyQNPKwkNF+uWbdcytJeGNGYxxDICIQDj5tWzMhVZxUKuYKxH3z6QWp7IslgEPc0jUp6jK+OthSqGAwjd//////////8BEAAaDDY3OTY0OTU3OTc1MyIMZYL69tqTKqPbwvpPKtoCBIp+g86mtOEpkx0kg2nUzEwuxVc4NfwW8nFbIR2z9NHS1c+RBgNr70MqbZE1lCPip+Cy6VbRXUzWR+rYuHctKYpV17oBzSVaCv5Mz/KDePnye9DgbBmZabhzejDlY87HebwQqW5YczFbkJMGGc8KmWcZ14Hrjegf1uymzV4N0KI2V0TbCTVPMutaDrFfSNLTMZWFAlV3I2ANAwTYGJiloO/7oj33K4QiD83Vg5u3X4bY4O7H/Vah2OKomKjDsF63URxW3TEoxmR2FHHAtvRnQM+kETtQpaNTJ2VVqZlrFNouh0H7mwjT6Fpi5Qnk/dVdah8F3BXU+TMrqJBLbpW78hRk5U8OIYhYnVEz+oIGMcTuRq6z8YMcm7K5brzrMqdxBqREfBZpDEGgHg3Xz9pzaxTnslVLjWM0NH49WZw+65zpzHqK05b/4ekAs2axYrmxAkOR0WNo0W7ErTDD3MOnBjqmAT3BumEuTFDGpPZPz8fyZJhm3De4ZCMF8vhHAPV0dpR+y9N2QSsRLGQ2ND29/6ls8HVNN2EytrZvcGnUU9wQuNiPM90rSMSiGAy0O0dlA0D+S3Yycyx/DEwMsbt66eXKvUe+2A1IcBBxDr0h3zx4aRHxxuR4Hd8ZxD5Wetvy2f1V5oS8IOVAlkmzSFq6Bbk56cv9aeJUOwNuj8LcREJb16SoQFfqzm8=
+

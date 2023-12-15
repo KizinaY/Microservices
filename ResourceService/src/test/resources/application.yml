@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=LEGACY
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: pswr
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+      hbm2ddl.auto: validate
+    properties:
+      hibernate:
+        hibernate:
+          dialect: org.hibernate.dialect.H2Dialect
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  application:
+    name: resource
+  h2:
+    console:
+      enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-h2.yaml
+  cloud:
+    discovery:
+      enabled: false
+  profiles:
+    active: test
+queue:
+  name:
+    audio: audio_queue
+    processing: processing_queue
+exchange:
+  name:
+    audio: audio_exchange
+    processing: processing_exchange
+storage:
+  service:
+    name: test-storage-name
+    path:
+      get: test-storage-get-path
+PROCESSING_QUEUE_NAME: processing-queue

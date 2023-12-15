@@ -1,0 +1,28 @@
+version: '3'
+services:
+  resource-service:
+    build:
+      context: .
+    ports:
+      - 8030:8030
+    depends_on:
+      - audio-postgres
+    networks:
+      - audio-network
+    env_file:
+      - .env
+  audio-postgres:
+    image: postgres
+    container_name: audio-postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5430:5432
+    volumes:
+      - ./audio:/var/lib/postgresql/data
+    networks:
+      - audio-network
+networks:
+  audio-network:
+    external: true

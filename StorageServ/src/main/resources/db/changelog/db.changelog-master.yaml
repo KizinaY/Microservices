@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableStorage
+      author: kizina
+      changes:
+        - createTable:
+            tableName: storage
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: storage_type
+                  type: VARCHAR(255)
+              - column:
+                  name: bucket
+                  type: VARCHAR(255)
+              - column:
+                  name: path
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: insertRow1
+      author: kizina
+      changes:
+        - insert:
+            tableName: storage
+            columns:
+              - column:
+                  name: storage_type
+                  value: 'PERMANENT'
+              - column:
+                  name: bucket
+                  value: 'kizinabucket2'
+              - column:
+                  name: path
+                  value: '/resources'
+
+  - changeSet:
+      id: insertRow2
+      author: kizina
+      changes:
+        - insert:
+            tableName: storage
+            columns:
+              - column:
+                  name: storage_type
+                  value: 'STAGING'
+              - column:
+                  name: bucket
+                  value: 'kizinabucket4'
+              - column:
+                  name: path
+                  value: '/resources'

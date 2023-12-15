@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: resource_processor
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+server:
+  port: 8036
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_REGISTRY_URL}
+queue:
+  name:
+    audio: ${AUDIO_QUEUE_NAME}
+    processing: ${PROCESSING_QUEUE_NAME}
+exchange:
+  name:
+    audio: ${AUDIO_EXCHANGE_NAME}
+    processing: ${PROCESSING_EXCHANGE_NAME}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

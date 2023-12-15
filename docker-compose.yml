@@ -1,0 +1,186 @@
+version: '3'
+services:
+  eureka-discovery-service:
+    build:
+      context: EurekaRegistry
+    ports:
+      - 8032:8032
+    networks:
+      - audio-network
+
+  gateway-service:
+    build:
+      context: gateway
+    ports:
+      - 8035:8035
+    depends_on:
+      - eureka-discovery-service
+    networks:
+      - audio-network
+    env_file:
+      - gateway/.env
+
+  resource-service:
+    build:
+      context: ResourceService
+    ports:
+      - 8030:8030
+    depends_on:
+      - audio-postgres
+      - eureka-discovery-service
+      - rabbitmq
+    networks:
+      - audio-network
+    env_file:
+      - ResourceService/.env
+  audio-postgres:
+    image: postgres
+    container_name: audio-postgres
+    ports:
+      - 5430:5432
+    volumes:
+      - ./ResourceService/audio:/var/lib/postgresql/data
+    networks:
+      - audio-network
+    env_file:
+      - ResourceService/.env
+
+  song-service-1:
+    build:
+      context: SongService
+    ports:
+      - 8031:8031
+    depends_on:
+      - metadata-postgres
+      - eureka-discovery-service
+      - rabbitmq
+    networks:
+      - audio-network
+    env_file:
+      - SongService/.env
+
+  song-service-2:
+    build:
+      context: SongService
+    ports:
+      - 8033:8031
+    depends_on:
+      - metadata-postgres
+      - eureka-discovery-service
+      - rabbitmq
+    networks:
+      - audio-network
+    env_file:
+      - SongService/.env
+
+  metadata-postgres:
+    image: postgres
+    container_name: metadata-postgres
+    ports:
+      - 5431:5432
+    volumes:
+      - ./SongService/metadata:/var/lib/postgresql/data
+    networks:
+      - audio-network
+    env_file:
+      - SongService/.env
+
+  resource-processor:
+    build:
+      context: ResourceProcessor
+    ports:
+      - 8036:8036
+    depends_on:
+      - eureka-discovery-service
+      - song-service-1
+      - song-service-2
+      - rabbitmq
+    networks:
+      - audio-network
+    env_file:
+      - ResourceProcessor/.env
+
+  storage-service:
+    build:
+      context: StorageServ
+    ports:
+      - 8034:8034
+    depends_on:
+      - eureka-discovery-service
+      - storage-postgres
+    networks:
+      - audio-network
+    env_file:
+      - StorageServ/.env
+
+  storage-postgres:
+    image: postgres
+    container_name: storage-postgres
+    ports:
+      - 5435:5432
+    volumes:
+      - ./StorageServ/storage:/var/lib/postgresql/data
+    networks:
+      - audio-network
+    env_file:
+      - StorageServ/.env
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./a-rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - audio-network
+    env_file:
+      - .env
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - audio-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    networks:
+      - audio-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - audio-network
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    ports:
+      - 8080:8080
+      - 9990:9990
+    volumes:
+      - ./keycloak-data:/opt/jboss/keycloak/standalone/data
+    networks:
+      - audio-network
+
+networks:
+  audio-network:
+    external: true

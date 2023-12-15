@@ -1,0 +1,97 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/audio
+    password: ${POSTGRES_PASSWORD}
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+      hbm2ddl.auto: validate
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  application:
+    name: resource
+  profiles:
+    active: prod
+server:
+  port: 8030
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_REGISTRY_URL}
+queue:
+  name:
+    audio: ${AUDIO_QUEUE_NAME}
+    processing: ${PROCESSING_QUEUE_NAME}
+exchange:
+  name:
+    audio: ${AUDIO_EXCHANGE_NAME}
+    processing: ${PROCESSING_EXCHANGE_NAME}
+storage:
+  service:
+    name: ${STORAGE_SERVICE_NAME}
+    path:
+      get: ${PATH_FOR_GET_STORAGES}
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        resilience4j.circuitbreaker.calls: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      defaultConfig:
+        registerHealthIndicator: true
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        slidingWindowSize: 4
+        waitDurationInOpenState: 5000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - java.lang.Exception
+    instances:
+      storage:
+        baseConfig: defaultConfig

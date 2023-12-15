@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableMetadata
+      author: kizina
+      changes:
+        - createTable:
+            tableName: metadata
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: artist
+                  type: VARCHAR(255)
+              - column:
+                  name: album
+                  type: VARCHAR(255)
+              - column:
+                  name: duration
+                  type: VARCHAR(255)
+              - column:
+                  name: song_year
+                  type: VARCHAR(255)
+              - column:
+                  name: resource_id
+                  type: BIGINT
+                  constraints:
+                    unique: true
+  - changeSet:
+      id: insertTestValues
+      author: kizina
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO metadata (album, artist, duration, resource_id, title, song_year)
+              VALUES
+              ('Test Album 1', 'Test Artist 1', '3:30', 12345, 'Test Song 1', '2023'),
+              ('Test Album 2', 'Test Artist 2', '4:15', 67890, 'Test Song 2', '2022'),
+              ('Test Album 3', 'Test Artist 3', '2:50', 54321, 'Test Song 3', '2021');
